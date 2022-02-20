@@ -1,3 +1,5 @@
+//? Validation Function
+
 const validate = (value) => {
     let error = {};
     const emailRegex =
