@@ -1,10 +1,12 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Card = (props) => {
     const { title, body } = props.post;
-    const { list, DeleteCard } = props;
+    const { list, DeleteCard, setShow } = props;
     return (
-        <div
+        <Link
+            to="/iframe"
             className={`bg-[#ffffff] flex shadow-md relative animate ${
                 list
                     ? "w-[80%] p-4 h-max items-center mb-4 rounded-2xl"
@@ -34,7 +36,10 @@ const Card = (props) => {
             </div>
 
             <button
-                onClick={() => DeleteCard(props.post)}
+                onClick={(event) => {
+                    DeleteCard(event, props.post);
+                    setShow(false);
+                }}
                 className={`w-10 h-10  flex items-center justify-center absolute ${
                     list
                         ? "-right-14 bg-[#ffffff] rounded-full"
@@ -45,7 +50,7 @@ const Card = (props) => {
                     <i class="bx bx-x"></i>
                 </span>
             </button>
-        </div>
+        </Link>
     );
 };
 

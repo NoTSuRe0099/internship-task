@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import validate from "../../Validate";
+import { countryList } from "../../CountryList";
 
 const FeedbackForm = () => {
     const [state, setState] = useState({
@@ -11,11 +12,15 @@ const FeedbackForm = () => {
         phone: "",
     });
 
+    const [filteredCountry, setFilteredCountry] = useState([]);
+
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
         console.log("error", errors);
     }, [errors]);
+
+    // console.log(countryList);
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -23,6 +28,33 @@ const FeedbackForm = () => {
             ...state,
             [name]: value,
         });
+
+        // if (
+        //     country.country_en.toLowerCase().includes(value.toLowerCase())
+        // ) {
+        //     setFilteredCountry([...filteredCountry, country]);
+        // }
+    };
+
+    useEffect(() => {
+        if (state.country.length >= 2) {
+            const filtered = countryList.filter((country) => {
+                return country.country_en
+                    .toLowerCase()
+                    .includes(state.country.toLowerCase());
+            });
+
+            setFilteredCountry(filtered);
+        }
+    }, [state.country]);
+
+    const handleInputCountry = (country) => {
+        setState({
+            ...state,
+            country: country.country_en,
+        });
+
+        setFilteredCountry([]);
     };
 
     const onSubmitForm = (e) => {
@@ -44,7 +76,11 @@ const FeedbackForm = () => {
 
     return (
         <>
-            <form onSubmit={onSubmitForm} className="w-[60%] animate">
+            <form
+                autoComplete="off"
+                onSubmit={onSubmitForm}
+                className="w-[60%] animate"
+            >
                 <div className="mb-8">
                     <h1 className="text-2xl font-bold">
                         Thank you so much for taking the time!
@@ -141,8 +177,37 @@ const FeedbackForm = () => {
                                 type="text"
                                 id="Country"
                                 placeholder="Country"
-                                className=" pl-4 p-2 rounded-md shadow-lg focus:outline-none focus:shadow-outline w-full"
+                                autoComplete="new-password"
+                                className="pl-4 p-2 rounded-md shadow-lg focus:outline-none focus:shadow-outline w-full"
                             />
+
+                            <div className="bg-red-200 absolute left-0 bottom-0 w-full z-20 ">
+                                {filteredCountry.length > 0 && (
+                                    <ul className="absolute bg-white shadow-lg rounded-md max-h-96 h-64 w-full mt-2 overflow-y-scroll">
+                                        {filteredCountry.map(
+                                            (suggestedCountry) => {
+                                                return (
+                                                    <li
+                                                        key={
+                                                            suggestedCountry.country_en
+                                                        }
+                                                        onClick={(e) =>
+                                                            handleInputCountry(
+                                                                suggestedCountry
+                                                            )
+                                                        }
+                                                        className="text-gray-900 font-medium border p-2 w-full text-center cursor-pointer hover:bg-gray-200"
+                                                    >
+                                                        {
+                                                            suggestedCountry.country_en
+                                                        }
+                                                    </li>
+                                                );
+                                            }
+                                        )}
+                                    </ul>
+                                )}
+                            </div>
                         </div>{" "}
                         {errors.country && (
                             <p className="text-red-500 font-normal ml-4 my-auto">
